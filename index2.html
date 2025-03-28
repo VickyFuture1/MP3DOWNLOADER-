@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MP3DOWNLOADER</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;700&display=swap');
+        
+        body {
+            background-color: #A7C957;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        
+        @keyframes highlight {
+            0% { background-color: rgba(255,255,0,0.3); }
+            100% { background-color: transparent; }
+        }
+        
+        .container {
+            margin-top: 100px;
+        }
+        
+        .search-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 90%;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .search-bar {
+            width: 100%;
+            padding: 15px 100px 15px 20px;
+            border-radius: 50px;
+            border: none;
+            outline: none;
+            font-size: 18px;
+            text-align: left;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .search-button {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: none;
+            background-color: #4CAF50;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .search-button:hover {
+            background-color: #45a049;
+        }
+        
+        .logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .logo svg {
+            width: 100px;
+            height: 100px;
+        }
+        
+        h1 {
+            font-size: 24px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        .title-container {
+            display: flex;
+            align-items: center;
+        }
+        
+        .mp3-part {
+            position: relative;
+            display: inline-block;
+            margin-left: 5px;
+        }
+        
+        .mp3-background {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: calc(100% + 15px);
+            height: calc(100% + 10px);
+            background-color: rgba(128, 128, 128, 0.2);
+            border: 2px solid rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            z-index: -1;
+        }
+        
+        .title-text {
+            font-family: 'Rubik', sans-serif;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            padding: 0 5px;
+            position: relative;
+            z-index: 1;
+            font-size: 24px;
+        }
+        
+        .downloader-part {
+            font-family: 'Rubik', sans-serif;
+            font-weight: 700;
+            margin-left: 12px;
+            font-size: 20px;
+        }
+        
+        .translator-widget {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            transform: scale(0.8);
+            transform-origin: top right;
+        }
+        
+        /* Updated header links style */
+        .header-links {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            gap: 8px;
+            z-index: 1000;
+        }
+        
+        .header-link {
+            background-color: rgba(128, 128, 128, 0.2);
+            border: 1px solid rgba(0, 0, 0, 0.3);
+            border-radius: 5px; /* Partially rounded corners */
+            padding: 4px 10px;
+            font-size: 10px;
+            color: white; /* White text */
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .header-link:hover {
+            background-color: rgba(128, 128, 128, 0.3);
+        }
+        
+        /* Rest of the existing styles remain unchanged */
+        .about-section {
+            margin-top: 30px;
+            color: #666;
+            text-align: center;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 0 20px;
+        }
+        
+        .about-section h2 {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .about-section p {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .number-counter-container {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform: scale(0.8);
+        }
+        
+        .trending-songs-section {
+            margin-top: 30px;
+        }
+        
+        .trending-songs-section h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        .trending-songs {
+            display: flex;
+            overflow-x: auto;
+            gap: 15px;
+            padding: 10px;
+            margin: 0 auto;
+            max-width: 90%;
+        }
+        
+        .trending-songs::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .song-thumbnail {
+            flex: 0 0 auto;
+            width: 120px;
+            height: 120px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .song-thumbnail:hover {
+            transform: scale(1.1);
+        }
+        
+        .song-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .song-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            padding: 5px;
+            font-size: 12px;
+            text-align: center;
+        }
+        
+        .trending-description {
+            color: #666;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 10px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 0 20px;
+        }
+        
+        footer {
+            margin-top: 30px;
+            padding: 10px 0;
+            background-color: #A7C957;
+            border-top: 1px solid #666;
+        }
+        
+        .footer-links {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            margin: 0 10px;
+        }
+        
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+        
+        .footer-text {
+            color: #fff;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
+        .consent-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 10px;
+            text-align: center;
+        }
+        
+        .terms-link {
+            font-weight: bold;
+            color: #666;
+            text-decoration: none;
+        }
+        
+        .terms-link:hover {
+            text-decoration: underline;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .action-button {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: none;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-align: center;
+        }
+        
+        .mp3-button {
+            background-color: #4CAF50;
+            color: #fff;
+        }
+        
+        .mp4-button {
+            background-color: #4CAF50;
+            color: #fff;
+        }
+        
+        .play-button {
+            background-color: transparent;
+            border: 2px solid #4CAF50;
+            color: #4CAF50;
+        }
+        
+        .action-button:hover {
+            opacity: 0.9;
+        }
+        
+        .play-icon {
+            width: 20px;
+            height: 20px;
+            background-image: url('https://www.gstatic.com/images/icons/material/system/2x/play_arrow_black_24dp.png');
+            background-size: cover;
+            margin-right: 8px;
+        }
+        
+        .duration-text {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .rectangle-container {
+            background-color: #fff;
+            border-radius: 15px;
+            padding: 10px;
+            margin: 10px auto 0;
+            width: 90%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .rectangle-container button {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .rectangle-container button:hover {
+            opacity: 0.9;
+        }
+        
+        .refresh-button {
+            background-color: #4CAF50;
+            color: #fff;
+        }
+        
+        .more-button {
+            background-color: #4CAF50;
+            color: #fff;
+        }
+        
+        .suggestions-container {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            width: 90%;
+            margin: 0 auto;
+        }
+        
+        .suggestion-item {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+            color: #333;
+            text-align: left;
+            transition: background-color 0.2s;
+        }
+        
+        .suggestion-item:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+        
+        .highlight {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        
+        .no-results {
+            padding: 10px 20px;
+            color: #777;
+            font-style: italic;
+            text-align: left;
+        }
+        
+        .download-loading {
+            position: relative;
+            pointer-events: none;
+        }
+        
+        .download-loading:after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 16px;
+            height: 16px;
+            margin: -8px 0 0 -8px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="translator-widget">
+        <script src="https://static.elfsight.com/platform/platform.js" async></script>
+        <div class="elfsight-app-9fb6bc13-2b10-4f00-a3f6-fe5ad0ff84a3" data-elfsight-app-lazy></div>
+    </div>
+
+    <div class="header-links">
+        <a href="/troubleshoot" class="header-link">Troubleshoot</a>
+        <a href="/dmca" class="header-link">DMCA</a>
+        <a href="/contact" class="header-link">Contact</a>
+    </div>
+
+    <div class="container">
+        <div class="logo">
+            <h1>
+                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0,0,256,256">
+                    <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+                        <g transform="scale(2.56,2.56)">
+                            <path d="M87.215,56.71c1.135,-2.155 1.785,-4.605 1.785,-7.21c0,-6.621 -4.159,-12.257 -10.001,-14.478c0,-0.007 0.001,-0.014 0.001,-0.022c0,-11.598 -9.402,-21 -21,-21c-9.784,0 -17.981,6.701 -20.313,15.757c-1.476,-0.485 -3.049,-0.757 -4.687,-0.757c-7.692,0 -14.023,5.793 -14.89,13.252c-5.204,1.101 -9.11,5.717 -9.11,11.248c0,6.351 5.149,11.5 11.5,11.5c0.177,0 0.352,-0.012 0.526,-0.022c-0.004,0.175 -0.026,0.346 -0.026,0.522c0,11.322 9.178,20.5 20.5,20.5c6.437,0 12.175,-2.972 15.934,-7.614c2.178,2.225 5.206,3.614 8.566,3.614c4.65,0 8.674,-2.65 10.666,-6.518c1.052,0.335 2.171,0.518 3.334,0.518c6.075,0 11,-4.925 11,-11c0,-3.311 -1.47,-6.273 -3.785,-8.29z" fill="#c7ede6" stroke="#000" stroke-width="2" stroke-dasharray="50%"></path>
+                            <path d="M59.29,37.645l-12.605,2.701c-0.692,0.148 -1.186,0.759 -1.186,1.467v14.285c0,0.957 -0.678,1.78 -1.617,1.963c-0.976,0.19 -2.035,0.397 -2.053,0.401c-1.615,0.37 -2.624,1.979 -2.254,3.594c0.363,1.582 1.914,2.574 3.495,2.267l1.192,-0.223c1.88,-0.365 3.237,-2.012 3.237,-3.926v-13.195c0,-0.471 0.329,-0.879 0.79,-0.978l9.363,-2.013c0.436,-0.094 0.847,0.239 0.847,0.684v8.612c0,0.957 -0.678,1.78 -1.617,1.963c-0.976,0.19 -2.035,0.397 -2.053,0.401c-1.615,0.37 -2.624,1.979 -2.254,3.594c0.363,1.582 1.914,2.574 3.495,2.267l1.192,-0.223c1.88,-0.365 3.237,-2.012 3.237,-3.926v-18.738c0.001,-0.636 -0.586,-1.111 -1.209,-0.977z" fill="#fdfcef"></path>
+                            <path d="M59.29,37.645l-12.605,2.701c-0.692,0.148 -1.186,0.759 -1.186,1.467v14.285c0,0.957 -0.678,1.78 -1.617,1.963c-0.976,0.19 -2.035,0.397 -2.053,0.401c-1.615,0.37 -2.624,1.979 -2.254,3.594c0.363,1.582 1.914,2.574 3.495,2.267l1.192,-0.223c1.88,-0.365 3.237,-2.012 3.237,-3.926v-13.195c0,-0.471 0.329,-0.879 0.79,-0.978l9.363,-2.013c0.436,-0.094 0.847,0.239 0.847,0.684v8.612c0,0.957 -0.678,1.78 -1.617,1.963c-0.976,0.19 -2.035,0.397 -2.053,0.401c-1.615,0.37 -2.624,1.979 -2.254,3.594c0.363,1.582 1.914,2.574 3.495,2.267l1.192,-0.223c1.88,-0.365 3.237,-2.012 3.237,-3.926v-18.738c0.001,-0.636 -0.586,-1.111 -1.209,-0.977z" fill="none" stroke="#000" stroke-width="2" stroke-dasharray="50%"></path>
+                        </g>
+                    </g>
+                </svg>
+                <div class="title-container">
+                    <div class="mp3-part">
+                        <div class="mp3-background"></div>
+                        <span class="title-text">MP3</span>
+                    </div>
+                    <span class="downloader-part">DOWNLOADER</span>
+                </div>
+            </h1>
+        </div>
+        <div class="search-container">
+            <input type="text" class="search-bar" id="search-bar" placeholder="Search for songs or videos..." autocomplete="off">
+            <button class="search-button" onclick="showButtons()">Search</button>
+            <div class="suggestions-container" id="suggestions-container"></div>
+        </div>
+        
+        <p class="consent-text">
+            Confirm your consent to our <a href="/terms-of-use" class="terms-link">Terms of Use</a> by pressing "Search".
+        </p>
+
+        <div class="rectangle-container">
+            <button class="refresh-button" onclick="fetchMoreYouTubeResults(document.getElementById('search-bar').value)">Refresh</button>
+            <button class="more-button" onclick="fetchSoundCloudResults()">More (SoundCloud)</button>
+        </div>
+        <p class="trending-description" style="margin-top: 5px; color: #666;">
+            Use "Refresh" to load more results, Press "More(SoundCloud)" button to fetch related results from SoundCloud source
+        </p>
+
+        <div id="search-results" style="margin-top: 20px;"></div>
+
+        <div class="about-section">
+            <h2>ABOUT MP3DOWNLOADER</h2>
+            <p>
+                Welcome to MP3Downloader, your ultimate destination for free music downloads! Our platform offers a vast library of songs and videos, easily accessible without the need for registration. With MP3Downloader, you can effortlessly download your favorite tunes and videos in MP3 format. Our website is designed to provide a seamless and user-friendly experience, allowing you to quickly find and download the music you love. Whether you're a music enthusiast or just looking for a convenient way to access your favorite songs, MP3Downloader is the perfect solution. Explore our vast collection today and start downloading your favorite music for free!
+            </p>
+        </div>
+
+        <script src="https://static.elfsight.com/platform/platform.js" async></script>
+        <div class="elfsight-app-6271b4a2-c7ea-4f05-bf4a-df2130f68296" data-elfsight-app-lazy></div>
+
+        <div class="trending-songs-section">
+            <h2>Trending Songs</h2>
+            <div class="trending-songs" id="trending-songs">
+                <!-- Trending songs will be dynamically added here -->
+            </div>
+            <p class="trending-description">
+                Discover the hottest tracks from around the world with our Trending Songs feature! Our algorithm extracts data from YouTube, SoundCloud, and other popular music platforms to bring you the most popular songs in different countries.
+            </p>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-links">
+            <a href="/contact">Contact and Copyright Claims</a> |
+            <a href="/privacy-policy">Privacy Policy</a>
+        </div>
+        <div class="footer-text">
+            2025, MP3DOWNLOADER
+        </div>
+    </footer>
+
+    <script>
+        const API_KEY = "AIzaSyABX6A6GWZ_4jaz9RfcGCZilWf1lJHq-zM";
+        let nextPageToken = "";
+        const regionCodes = ["ZA", "US", "IN", "NG", "GB", "BR", "JP"];
+
+        function showButtons() {
+            const searchBar = document.getElementById("search-bar");
+            if (searchBar.value.trim() !== "") {
+                const resultsContainer = document.getElementById("search-results");
+                resultsContainer.innerHTML = "";
+                fetchYouTubeSearchResults(searchBar.value);
+            }
+        }
+
+        async function fetchYouTubeSearchResults(query, pageToken = "") {
+            const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=${encodeURIComponent(query)}&key=${API_KEY}&pageToken=${pageToken}`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                nextPageToken = data.nextPageToken || "";
+                const resultsContainer = document.getElementById("search-results");
+                resultsContainer.innerHTML = "";
+
+                const videoIds = data.items.map(item => item.id.videoId).join(",");
+                const durationResponse = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${videoIds}&key=${API_KEY}`);
+                const durationData = await durationResponse.json();
+
+                data.items.forEach((item, index) => {
+                    const resultItem = document.createElement("div");
+                    resultItem.classList.add("result-item");
+                    resultItem.style.backgroundColor = "#fff";
+                    resultItem.style.padding = "15px";
+                    resultItem.style.borderRadius = "15px";
+                    resultItem.style.marginBottom = "10px";
+                    resultItem.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.1)";
+
+                    const videoTitle = document.createElement("div");
+                    videoTitle.classList.add("video-title");
+                    videoTitle.textContent = item.snippet.title;
+                    videoTitle.style.fontSize = "14px";
+                    videoTitle.style.fontWeight = "bold";
+                    videoTitle.style.color = "#333";
+                    videoTitle.style.marginBottom = "10px";
+                    resultItem.appendChild(videoTitle);
+
+                    const playDuration = document.createElement("div");
+                    playDuration.classList.add("play-duration");
+                    playDuration.style.display = "flex";
+                    playDuration.style.alignItems = "center";
+                    playDuration.style.gap = "8px";
+                    playDuration.style.marginBottom = "15px";
+
+                    const playIcon = document.createElement("div");
+                    playIcon.classList.add("play-icon");
+                    playDuration.appendChild(playIcon);
+
+                    const durationText = document.createElement("div");
+                    durationText.classList.add("duration-text");
+                    const duration = durationData.items[index].contentDetails.duration;
+                    durationText.textContent = `Duration: ${formatDuration(duration)}`;
+                    playDuration.appendChild(durationText);
+
+                    resultItem.appendChild(playDuration);
+
+                    const actionButtons = document.createElement("div");
+                    actionButtons.classList.add("action-buttons");
+
+                    const mp3Button = document.createElement("button");
+                    mp3Button.classList.add("action-button", "mp3-button");
+                    mp3Button.textContent = "MP3 Download";
+                    actionButtons.appendChild(mp3Button);
+
+                    const mp4Button = document.createElement("button");
+                    mp4Button.classList.add("action-button", "mp4-button");
+                    mp4Button.textContent = "MP4 Download";
+                    actionButtons.appendChild(mp4Button);
+
+                    const playButton = document.createElement("button");
+                    playButton.classList.add("action-button", "play-button");
+                    playButton.textContent = "Play";
+                    playButton.addEventListener("click", () => toggleVideoPlayback(item.id.videoId, playButton));
+                    actionButtons.appendChild(playButton);
+
+                    resultItem.appendChild(actionButtons);
+                    resultsContainer.appendChild(resultItem);
+                });
+
+                const buttonContainer = document.createElement("div");
+                buttonContainer.className = "rectangle-container";
+
+                const refreshBtn = document.createElement("button");
+                refreshBtn.className = "refresh-button";
+                refreshBtn.textContent = "Refresh";
+                refreshBtn.onclick = () => fetchMoreYouTubeResults(query);
+
+                const soundcloudBtn = document.createElement("button");
+                soundcloudBtn.className = "more-button";
+                soundcloudBtn.textContent = "More (SoundCloud)";
+                soundcloudBtn.onclick = fetchSoundCloudResults;
+
+                buttonContainer.appendChild(refreshBtn);
+                buttonContainer.appendChild(soundcloudBtn);
+                resultsContainer.appendChild(buttonContainer);
+
+                // Highlight and scroll to results
+                resultsContainer.style.animation = "highlight 1s";
+                setTimeout(() => {
+                    resultsContainer.style.animation = "";
+                }, 1000);
+                
+            } catch (error) {
+                console.error("Error fetching YouTube search results:", error);
+            }
+        }
+
+        async function fetchMoreYouTubeResults(query) {
+            if (nextPageToken) {
+                await fetchYouTubeSearchResults(query, nextPageToken);
+            }
+        }
+
+        async function fetchSoundCloudResults() {
+            alert("SoundCloud results functionality is not implemented yet.");
+        }
+
+        function formatDuration(duration) {
+            const match = duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
+            const hours = match[1] ? match[1].replace("H", "") : "0";
+            const minutes = match[2] ? match[2].replace("M", "") : "0";
+            const seconds = match[3] ? match[3].replace("S", "") : "0";
+            return `${minutes.padStart(2, "0")}:${seconds.padStart(2, "0")}`;
+        }
+
+        function toggleVideoPlayback(videoId, playButton) {
+            const videoContainer = playButton.parentElement.parentElement.querySelector(".video-container");
+
+            if (playButton.textContent === "Play") {
+                const iframe = document.createElement("iframe");
+                iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+                iframe.width = "100%";
+                iframe.height = "200";
+                iframe.style.borderRadius = "10px";
+                iframe.style.marginBottom = "10px";
+
+                const container = document.createElement("div");
+                container.classList.add("video-container");
+                container.appendChild(iframe);
+                playButton.parentElement.parentElement.insertBefore(container, playButton.parentElement);
+
+                playButton.textContent = "Stop";
+                playButton.style.backgroundColor = "#ff4d4d";
+                playButton.style.color = "#fff";
+            } else {
+                if (videoContainer) {
+                    videoContainer.remove();
+                }
+
+                playButton.textContent = "Play";
+                playButton.style.backgroundColor = "transparent";
+                playButton.style.color = "#4CAF50";
+                playButton.style.border = "2px solid #4CAF50";
+            }
+        }
+
+        function handleTrendingSongClick(songTitle, artist) {
+            const searchBar = document.getElementById("search-bar");
+            searchBar.value = `${songTitle} ${artist}`;
+            
+            // First scroll to search bar
+            searchBar.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Then perform search after slight delay
+            setTimeout(() => {
+                showButtons();
+                
+                // Scroll to results after they load
+                setTimeout(() => {
+                    const resultsElement = document.getElementById("search-results");
+                    if (resultsElement) {
+                        resultsElement.scrollIntoView({ 
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                        
+                        // Highlight results
+                        resultsElement.style.animation = "highlight 1s";
+                        setTimeout(() => {
+                            resultsElement.style.animation = "";
+                        }, 1000);
+                    }
+                }, 800);
+            }, 300);
+        }
+
+        async function fetchTrendingSongs() {
+            const trendingSongsContainer = document.getElementById("trending-songs");
+            trendingSongsContainer.innerHTML = "";
+
+            for (const regionCode of regionCodes) {
+                const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&regionCode=${regionCode}&videoCategoryId=10&maxResults=5&key=${API_KEY}`;
+
+                try {
+                    const response = await fetch(url);
+                    const data = await response.json();
+
+                    data.items.forEach(item => {
+                        const songElement = document.createElement("div");
+                        songElement.classList.add("song-thumbnail");
+                        songElement.addEventListener("click", () => {
+                            handleTrendingSongClick(item.snippet.title, item.snippet.channelTitle);
+                        });
+
+                        const img = document.createElement("img");
+                        img.src = item.snippet.thumbnails.medium.url;
+                        img.alt = item.snippet.title;
+
+                        const songInfo = document.createElement("div");
+                        songInfo.classList.add("song-info");
+                        songInfo.textContent = `${item.snippet.title} - ${item.snippet.channelTitle}`;
+
+                        songElement.appendChild(img);
+                        songElement.appendChild(songInfo);
+                        trendingSongsContainer.appendChild(songElement);
+                    });
+                } catch (error) {
+                    console.error("Error fetching trending songs:", error);
+                }
+            }
+        }
+
+        function autoScrollTrendingSongs() {
+            const container = document.getElementById("trending-songs");
+            let scrollAmount = 0;
+            const scrollSpeed = 1;
+
+            setInterval(() => {
+                container.scrollLeft += scrollSpeed;
+                scrollAmount += scrollSpeed;
+
+                if (scrollAmount >= container.scrollWidth - container.clientWidth) {
+                    container.scrollLeft = 0;
+                    scrollAmount = 0;
+                }
+            }, 20);
+        }
+
+        fetchTrendingSongs();
+        autoScrollTrendingSongs();
+    </script>
+</body>
+</html>
